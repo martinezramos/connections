@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conexiones</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;700;800&display=swap');
+
+    body { font-family: 'Karla', sans-serif; }
+
+    .tile {
+      transition: background-color 0.15s ease, transform 0.15s ease;
+      user-select: none;
+    }
+    .tile:hover:not(.solved-tile) {
+      background-color: #5a594e !important;
+      color: #fff !important;
+    }
+    .tile.selected {
+      background-color: #5a594e !important;
+      color: #fff !important;
+    }
+
+    /* Shake animation para error */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%       { transform: translateX(-6px); }
+      40%       { transform: translateX(6px); }
+      60%       { transform: translateX(-4px); }
+      80%       { transform: translateX(4px); }
+    }
+    .shake { animation: shake 0.5s ease; }
+
+    /* Bounce animation para acierto */
+    @keyframes bounceIn {
+      0%   { transform: scaleY(0.2); opacity: 0; }
+      60%  { transform: scaleY(1.05); }
+      100% { transform: scaleY(1); opacity: 1; }
+    }
+    .bounce-in { animation: bounceIn 0.4s ease forwards; }
+
+    /* Pop para selección de tile */
+    @keyframes pop {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+    .pop { animation: pop 0.15s ease; }
+
+    /* Flip al revelar grupo */
+    @keyframes flipIn {
+      0%   { transform: rotateX(90deg); opacity: 0; }
+      100% { transform: rotateX(0deg); opacity: 1; }
+    }
+    .flip-in { animation: flipIn 0.35s ease forwards; }
+
+    .solved-tile { cursor: default; }
+
+    /* Dot de errores */
+    .error-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background-color: #433f38;
+      display: inline-block;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .error-dot.used {
+      background-color: #d4d0c8;
+      transform: scale(0.8);
+    }
+  </style>
+</head>
+<body class="bg-white min-h-screen flex flex-col items-center">
+
+  <!-- Header -->
+  <header class="w-full max-w-2xl px-4 py-4 border-b border-gray-300">
+    <div class="flex items-center gap-3">
+      <h1 class="text-3xl font-extrabold tracking-tight">Conexiones</h1>
+      <span id="fecha-header" class="text-gray-500 text-lg font-medium"></span>
+    </div>
+  </header>
+
+  <!-- Instrucciones -->
+  <p class="mt-6 text-sm text-gray-600 text-center px-4">
+    ¡Crea cuatro grupos de cuatro!
+  </p>
+
+  <!-- Área principal del juego -->
+  <main class="w-full max-w-2xl px-4 mt-4 flex flex-col items-center gap-3">
+
+    <!-- Grupos resueltos se insertan aquí -->
+    <div id="solved-area" class="w-full flex flex-col gap-2"></div>
+
+    <!-- Grid de tiles -->
+    <div id="grid" class="w-full grid grid-cols-4 gap-2"></div>
+
+    <!-- Indicador de errores -->
+    <div class="flex items-center gap-2 mt-2">
+      <span class="text-sm text-gray-600">Errores restantes:</span>
+      <div id="error-dots" class="flex gap-2">
+        <span class="error-dot"></span>
+        <span class="error-dot"></span>
+        <span class="error-dot"></span>
+        <span class="error-dot"></span>
+      </div>
+    </div>
+
+    <!-- Controles -->
+    <div class="flex gap-3 mt-2 mb-8">
+      <button id="btn-shuffle"
+        class="px-5 py-2 rounded-full border-2 border-gray-800 text-sm font-bold hover:bg-gray-100 transition">
+        Barajar
+      </button>
+      <button id="btn-deselect"
+        class="px-5 py-2 rounded-full border border-gray-400 text-sm font-bold text-gray-600 hover:bg-gray-100 transition">
+        Deseleccionar todo
+      </button>
+      <button id="btn-submit"
+        class="px-5 py-2 rounded-full border border-gray-400 text-sm font-bold text-gray-400 cursor-not-allowed transition"
+        disabled>
+        Enviar
+      </button>
+    </div>
+  </main>
+
+  <!-- Modal Fin de juego -->
+  <div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-xl">
+      <div id="modal-emoji" class="text-5xl mb-3"></div>
+      <h2 id="modal-title" class="text-2xl font-extrabold mb-2"></h2>
+      <p id="modal-msg" class="text-gray-600 mb-6 text-sm"></p>
+
+      <!-- Resumen de grupos -->
+      <div id="modal-summary" class="flex flex-col gap-2 mb-6"></div>
+
+      <button id="btn-close-modal"
+        class="px-6 py-2 bg-gray-800 text-white rounded-full font-bold hover:bg-gray-700 transition">
+        Cerrar
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast para mensajes rápidos -->
+  <div id="toast"
+    class="hidden fixed top-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-sm font-semibold px-5 py-2 rounded-full shadow-lg z-50 pointer-events-none">
+  </div>
+
+  <script src="puzzles.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
