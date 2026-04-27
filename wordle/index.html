@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Palabrle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;700;800&display=swap');
+    body { font-family: 'Karla', sans-serif; }
+
+    /* Tile flip al revelar */
+    .tile {
+      perspective: 250px;
+      width: 62px;
+      height: 62px;
+    }
+    @media (max-width: 400px) {
+      .tile { width: 52px; height: 52px; }
+    }
+
+    .tile-inner {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.5s ease;
+    }
+    .tile-inner.flipped { transform: rotateX(180deg); }
+
+    .tile-front, .tile-back {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; font-weight: 800; text-transform: uppercase;
+      backface-visibility: hidden;
+      border-radius: 4px;
+    }
+    .tile-front {
+      background: white;
+      border: 2px solid #d1d5db;
+      color: #111;
+    }
+    .tile-front.has-letter {
+      border-color: #6b7280;
+      animation: pop 0.08s ease;
+    }
+    .tile-back { transform: rotateX(180deg); color: white; }
+
+    .tile-back.green  { background-color: #6aaa64; }
+    .tile-back.yellow { background-color: #c9b458; }
+    .tile-back.gray   { background-color: #787c7e; }
+
+    /* Shake fila error */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%       { transform: translateX(-5px); }
+      40%       { transform: translateX(5px); }
+      60%       { transform: translateX(-4px); }
+      80%       { transform: translateX(4px); }
+    }
+    .shake { animation: shake 0.4s ease; }
+
+    /* Pop al escribir */
+    @keyframes pop {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    /* Bounce victoria */
+    @keyframes bounceUp {
+      0%, 100% { transform: translateY(0); }
+      40%      { transform: translateY(-18px); }
+      70%      { transform: translateY(-8px); }
+    }
+    .bounce { animation: bounceUp 0.6s ease; }
+
+    /* Teclado */
+    .key {
+      height: 58px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      background: #d3d6da;
+      color: #111;
+      transition: background 0.2s;
+      user-select: none;
+      min-width: 32px;
+      flex: 1;
+    }
+    .key:active { filter: brightness(0.85); }
+    .key.wide   { flex: 1.6; font-size: 0.75rem; }
+    .key.green  { background: #6aaa64; color: white; }
+    .key.yellow { background: #c9b458; color: white; }
+    .key.gray   { background: #787c7e; color: white; }
+  </style>
+</head>
+<body class="bg-white min-h-screen flex flex-col items-center select-none">
+
+  <!-- Header -->
+  <header class="w-full max-w-lg border-b border-gray-200 flex items-center justify-between px-4 py-3">
+    <h1 class="text-2xl font-extrabold tracking-tight">Palabrle</h1>
+    <span id="fecha-header" class="text-gray-400 text-sm font-medium"></span>
+  </header>
+
+  <!-- Toast -->
+  <div id="toast"
+    class="hidden fixed top-20 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm font-bold
+           px-5 py-2 rounded-lg shadow-lg z-50 pointer-events-none">
+  </div>
+
+  <!-- Tablero -->
+  <div id="board" class="flex flex-col gap-1.5 mt-6"></div>
+
+  <!-- Teclado -->
+  <div id="keyboard" class="mt-6 mb-8 w-full max-w-lg px-2 flex flex-col gap-1.5"></div>
+
+  <!-- Modal fin de juego -->
+  <div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-xl">
+      <div id="modal-emoji" class="text-5xl mb-3"></div>
+      <h2 id="modal-title" class="text-2xl font-extrabold mb-1"></h2>
+      <p id="modal-word" class="text-gray-500 text-sm mb-4"></p>
+      <p id="modal-msg" class="text-gray-700 font-bold text-base mb-6"></p>
+      <button id="btn-close-modal"
+        class="px-6 py-2 bg-gray-800 text-white rounded-full font-bold hover:bg-gray-700 transition">
+        Cerrar
+      </button>
+    </div>
+  </div>
+
+  <script src="words.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

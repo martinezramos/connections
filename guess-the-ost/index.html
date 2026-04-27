@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guess the OST</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      letter-spacing: 2px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 1rem;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .card {
+      background: #16213e;
+      border: 1px solid #0f3460;
+      border-radius: 12px;
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      transition: border-color 0.2s;
+    }
+
+    .card.playing {
+      border-color: #e94560;
+    }
+
+    .card span {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    .play-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: none;
+      background: #0f3460;
+      color: #fff;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .play-btn:hover { background: #e94560; transform: scale(1.08); }
+    .card.playing .play-btn { background: #e94560; }
+  </style>
+</head>
+<body>
+  <h1>Guess the OST</h1>
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const tracks = [
+      "guess-2.mp3","guess-3.mp3","guess-4.mp3","guess-5.mp3",
+      "guess-6.mp3","guess-7.mp3","guess-8.mp3","guess-9.mp3",
+      "guess-11.mp3","guess-12.mp3","guess-13.mp3","guess-14.mp3","guess-15.mp3",
+      "guess-16.mp3","guess-17.mp3","guess-18.mp3","guess-19.mp3","guess-20.mp3",
+      "guess-21.mp3","guess-22.mp3","guess-23.mp3","guess-24.mp3","guess-25.mp3",
+      "guess-26.mp3","guess-27.mp3","guess-28.mp3","guess-29.mp3","guess-30.mp3",
+      "guess-31.mp3","guess-32.mp3"
+    ];
+
+    let current = null;
+
+    const grid = document.getElementById("grid");
+
+    tracks.forEach((file, i) => {
+      const audio = new Audio(file);
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const label = document.createElement("span");
+      label.textContent = `Track ${i + 1}`;
+
+      const btn = document.createElement("button");
+      btn.className = "play-btn";
+      btn.innerHTML = "&#9654;";
+      btn.setAttribute("aria-label", `Play track ${i + 1}`);
+
+      btn.addEventListener("click", () => {
+        if (current && current.audio !== audio) {
+          current.audio.pause();
+          current.audio.currentTime = 0;
+          current.card.classList.remove("playing");
+          current.btn.innerHTML = "&#9654;";
+        }
+
+        if (audio.paused) {
+          audio.play();
+          card.classList.add("playing");
+          btn.innerHTML = "&#9646;&#9646;";
+          current = { audio, card, btn };
+        } else {
+          audio.pause();
+          card.classList.remove("playing");
+          btn.innerHTML = "&#9654;";
+          current = null;
+        }
+      });
+
+      audio.addEventListener("ended", () => {
+        card.classList.remove("playing");
+        btn.innerHTML = "&#9654;";
+        current = null;
+      });
+
+      card.appendChild(label);
+      card.appendChild(btn);
+      grid.appendChild(card);
+    });
+  </script>
+</body>
+</html>

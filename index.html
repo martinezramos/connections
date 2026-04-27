@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Juegos Hera</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;700;800&display=swap');
+    body { font-family: 'Karla', sans-serif; }
+    .card:hover .arrow { transform: translateX(4px); }
+    .arrow { transition: transform 0.2s ease; display: inline-block; }
+  </style>
+</head>
+<body class="bg-white min-h-screen flex flex-col items-center justify-center px-4">
+
+  <div class="w-full max-w-md">
+    <h1 class="text-4xl font-extrabold tracking-tight mb-1">Juegos Hera</h1>
+    <p class="text-gray-400 text-sm mb-10">Juegos de palabras en español</p>
+
+    <div class="flex flex-col gap-4">
+
+      <!-- Connections -->
+      <a href="./connections/" class="card border border-gray-200 rounded-2xl p-6 flex items-center justify-between hover:border-gray-400 hover:shadow-sm transition group">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Asociación</p>
+          <h2 class="text-xl font-extrabold">Conexiones</h2>
+          <p class="text-gray-500 text-sm mt-1">Agrupa las 16 palabras en 4 categorías.</p>
+        </div>
+        <span class="arrow text-2xl text-gray-300 group-hover:text-gray-600">→</span>
+      </a>
+
+      <!-- Wordle -->
+      <a href="./wordle/" class="card border border-gray-200 rounded-2xl p-6 flex items-center justify-between hover:border-gray-400 hover:shadow-sm transition group">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Adivinanza</p>
+          <h2 class="text-xl font-extrabold">Palabrle</h2>
+          <p class="text-gray-500 text-sm mt-1">Adivina la palabra de 5 letras en 6 intentos.</p>
+        </div>
+        <span class="arrow text-2xl text-gray-300 group-hover:text-gray-600">→</span>
+      </a>
+
+      <!-- Strands -->
+      <a href="./strands/" class="card border border-gray-200 rounded-2xl p-6 flex items-center justify-between hover:border-gray-400 hover:shadow-sm transition group">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Búsqueda</p>
+          <h2 class="text-xl font-extrabold">Hilos</h2>
+          <p class="text-gray-500 text-sm mt-1">Encuentra las palabras ocultas en el tablero.</p>
+        </div>
+        <span class="arrow text-2xl text-gray-300 group-hover:text-gray-600">→</span>
+      </a>
+
+    </div>
+  </div>
+
+</body>
+</html>
