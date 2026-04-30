@@ -166,6 +166,43 @@ const PUZZLES = [
         ]
 
     },
+    {
+        // Puzzle 6 — 2026-04-30
+        uuid: "a1b2c3d4-0007-4e5f-8a9b-000000000007",
+        fecha: "2026-04-30",
+        categorias: [
+            {
+                nombre: "Guadalajara Guadalajara!!!",
+                color: "yellow",
+                palabras: ["TORE", "ALEX", "CHIVAS", "PERLA"],
+            },
+            {
+                nombre: "Orgullo de Monterrey",
+                color: "green",
+                palabras: ["PAULO", "TIGRES", "SILLA", "CABRITO"],
+            },
+            {
+                nombre: "Cosas 'Saladas' o que tienen Mala Suerte",
+                color: "blue",
+                palabras: ["ARMANDO", "CRUZ AZUL", "MARTES 13", "ANCHOA"],
+            },
+            {
+                nombre: "Del mero puerto de Veracruz",
+                color: "purple",
+                palabras: ["KRYSTAL", "TIBURONES", "PLAYA", "TAMPICO"],
+            },
+            {
+                nombre: "QUERETAROCK",
+                color: "orange",
+                palabras: ["PONCHO", "SIL", "JOSEFA", "GALLOS"],
+            },
+            {
+                nombre: "Frony Y Producto",
+                color: "red",
+                palabras: ["MARTHS", "ISA", "MAIDED", "SOL"],
+            },
+        ],
+    }
 ];
 
 // Colores Tailwind por nivel
@@ -193,6 +230,18 @@ const COLOR_CLASSES = {
         text: "text-purple-900",
         dot: "bg-purple-400",
         label: "Morado",
+    },
+    orange: {
+        bg: "bg-orange-400",
+        text: "text-orange-900",
+        dot: "bg-orange-400",
+        label: "Naranja",
+    },
+    red: {
+        bg: "bg-red-400",
+        text: "text-red-900",
+        dot: "bg-red-400",
+        label: "Rojo",
     },
 };
 

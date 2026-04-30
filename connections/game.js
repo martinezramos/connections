@@ -50,6 +50,19 @@ function getUUIDFromURL() {
   return null;
 }
 
+// ── Persistencia (un intento por puzzle) ─────────────────────
+const STORAGE_PREFIX = "conexiones_v1_";
+
+function saveResult(gano, gruposSinResolver) {
+  const data = { gano, erroresRestantes: state.erroresRestantes, gruposSinResolver };
+  localStorage.setItem(STORAGE_PREFIX + state.puzzle.uuid, JSON.stringify(data));
+}
+
+function loadSavedResult() {
+  const raw = localStorage.getItem(STORAGE_PREFIX + state.puzzle.uuid);
+  return raw ? JSON.parse(raw) : null;
+}
+
 // ── Inicialización ───────────────────────────────────────────
 function init() {
   const uuid = getUUIDFromURL();
@@ -62,6 +75,17 @@ function init() {
     month: "long",
     day: "numeric",
   });
+
+  // Comprobar si ya se jugó este puzzle
+  const saved = loadSavedResult();
+  if (saved) {
+    state.puzzle.categorias.forEach((cat) => appendSolvedBlock(cat, false));
+    state.erroresRestantes = saved.erroresRestantes;
+    updateErrorDots();
+    state.bloqueado = true;
+    showModal(saved.gano, saved.gruposSinResolver);
+    return;
+  }
 
   // Extraer todas las palabras y mezclarlas
   state.words = state.puzzle.categorias.flatMap((c) => c.palabras);
@@ -178,9 +202,13 @@ async function handleSubmit() {
 
     if (state.erroresRestantes === 0) {
       await sleep(600);
+      const gruposSinResolver = state.puzzle.categorias.filter(
+        (cat) => !state.solved.includes(cat)
+      ).length;
       await revealAllRemaining();
       await sleep(400);
-      showModal(false);
+      saveResult(false, gruposSinResolver);
+      showModal(false, gruposSinResolver);
     }
   }
 
@@ -214,22 +242,13 @@ async function animateCorrect(categoria) {
   // Comprobar victoria
   if (state.solved.length === state.puzzle.categorias.length) {
     await sleep(500);
-    showModal(true);
+    saveResult(true, 0);
+    showModal(true, 0);
   }
 }
 
 // ── Revelar grupo resuelto ───────────────────────────────────
-async function revealGroup(categoria) {
-  // Marcar como resuelta
-  state.solved.push(categoria);
-
-  // Quitar palabras del grid
-  state.words = state.words.filter((w) => !categoria.palabras.includes(w));
-
-  // Remover tiles del grid
-  categoria.palabras.forEach((w) => getTileEl(w)?.remove());
-
-  // Crear bloque de grupo resuelto
+function appendSolvedBlock(categoria, animate) {
   const colors = COLOR_CLASSES[categoria.color];
   const block = document.createElement("div");
   block.className = [
@@ -240,15 +259,20 @@ async function revealGroup(categoria) {
     "text-center",
     colors.bg,
     colors.text,
-    "bounce-in",
+    ...(animate ? ["bounce-in"] : []),
   ].join(" ");
-
   block.innerHTML = `
     <p class="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">${categoria.nombre}</p>
     <p class="font-extrabold text-sm tracking-wide">${categoria.palabras.join(" · ")}</p>
   `;
-
   solvedAreaEl.appendChild(block);
+}
+
+async function revealGroup(categoria) {
+  state.solved.push(categoria);
+  state.words = state.words.filter((w) => !categoria.palabras.includes(w));
+  categoria.palabras.forEach((w) => getTileEl(w)?.remove());
+  appendSolvedBlock(categoria, true);
   await sleep(400);
 }
 
@@ -322,12 +346,12 @@ function showToast(msg, duration = 2000) {
 }
 
 // ── Modal ────────────────────────────────────────────────────
-function showModal(gano) {
+function showModal(gano, gruposSinResolver = 0) {
   modalEmoji.textContent   = gano ? "🎉" : "😔";
   modalTitle.textContent   = gano ? "¡Felicidades!" : "¡Suerte la próxima!";
   modalMsg.textContent     = gano
     ? "Resolviste todas las conexiones."
-    : `Te quedaron ${state.puzzle.categorias.length - state.solved.length} grupo(s) sin resolver.`;
+    : `Te quedaron ${gruposSinResolver} grupo(s) sin resolver.`;
 
   // Resumen de grupos en el modal
   modalSummary.innerHTML = "";
